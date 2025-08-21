@@ -7,7 +7,8 @@ import {
   TrendingUp,
   FileText,
   Shield,
-  Calculator
+  Calculator,
+  Database
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -24,6 +25,7 @@ import {
 
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
+  { title: "Drug Database", url: "/drugs", icon: Database },
   { title: "Formulary", url: "/formulary", icon: PillBottle },
   { title: "Scenarios", url: "/scenarios", icon: Calculator },
   { title: "Providers", url: "/providers", icon: Users },

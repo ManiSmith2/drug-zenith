@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
+import DrugDatabase from "./pages/DrugDatabase";
 import Formulary from "./pages/Formulary";
 import Scenarios from "./pages/Scenarios";
 import Providers from "./pages/Providers";
@@ -22,6 +23,11 @@ const App = () => (
           <Route path="/" element={
             <AppLayout>
               <Dashboard />
+            </AppLayout>
+          } />
+          <Route path="/drugs" element={
+            <AppLayout>
+              <DrugDatabase />
             </AppLayout>
           } />
           <Route path="/formulary" element={

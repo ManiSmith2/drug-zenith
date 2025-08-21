@@ -36,7 +36,7 @@ export const mockDrugDetails: DrugDetails[] = [
     avg_age: 35,
     state: "CA",
     drug_interactions: "CYP3A4 inhibitors increase budesonide (H02AB02)",
-    clinical_efficacy: "45–69% clinical improvement at 8 weeks in Crohn’s disease trials",
+    clinical_efficacy: "45–69% clinical improvement at 8 weeks in Crohn's disease trials",
     created_at: "2024-01-15",
     updated_at: "2025-08-21",
   },
@@ -453,7 +453,7 @@ export const mockDrugDetails: DrugDetails[] = [
     member_count: 550,
     avg_age: 46,
     state: "PA",
-    drug_interactions: "Miconazole (severe hypo),  many glucose-affecting drugs",
+    drug_interactions: "Miconazole (severe hypo),  many glucose-affecting drugs",
     clinical_efficacy: "fasting and post-prandial glucose reductions",
     created_at: "2025-08-08",
     updated_at: "2025-08-21",
@@ -745,14 +745,37 @@ export const mockDrugDetails: DrugDetails[] = [
   },
 ];
 
-// KPI Mock Data
-export const mockKPIs = {
-  pmpm: 89.45,
-  pmpm_trend: -3.2,
-  cost_reduction_percent: 8.5,
-  member_access_percent: 96.8,
-  generic_fill_rate: 87.3
+// Calculate KPIs from actual drug data
+const calculateKPIs = () => {
+  const totalCost = mockDrugDetails.reduce((sum, drug) => {
+    const cost = typeof drug.total_drug_cost === 'string' 
+      ? parseFloat(drug.total_drug_cost.replace(/[$,]/g, '')) 
+      : drug.total_drug_cost;
+    return sum + cost;
+  }, 0);
+
+  const totalMembers = mockDrugDetails.reduce((sum, drug) => {
+    const members = typeof drug.member_count === 'string' 
+      ? parseInt(drug.member_count.replace(/,/g, ''))
+      : drug.member_count;
+    return sum + members;
+  }, 0);
+
+  const genericDrugs = mockDrugDetails.filter(drug => 
+    drug.therapeutic_equivalence_code === 'AB' || 
+    drug.therapeutic_equivalence_code === 'AB1'
+  ).length;
+
+  return {
+    pmpm: totalCost / totalMembers * 12, // Annual PMPM
+    pmpm_trend: -3.2,
+    cost_reduction_percent: 8.5,
+    member_access_percent: 96.8,
+    generic_fill_rate: (genericDrugs / mockDrugDetails.length) * 100
+  };
 };
+
+export const mockKPIs = calculateKPIs();
 
 // PMMP Trend Data
 export const mockPMMPData = [
@@ -764,104 +787,131 @@ export const mockPMMPData = [
   { month: 'Jun', pmpm: 89.45, target: 85.0, baseline: 98.5 }
 ];
 
-// Utilization Trends Data
-export const mockUtilizationTrends = [
-  { category: 'Diabetes', current: 85, projected: 92 },
-  { category: 'Hypertension', current: 78, projected: 82 },
-  { category: 'Mental Health', current: 65, projected: 75 },
-  { category: 'Specialty', current: 45, projected: 52 },
-  { category: 'Antibiotics', current: 38, projected: 35 }
-];
+// Generate utilization trends from therapeutic classes
+const generateUtilizationTrends = () => {
+  const classMap = new Map();
+  
+  mockDrugDetails.forEach(drug => {
+    const className = drug.therapeutic_class;
+    if (!classMap.has(className)) {
+      classMap.set(className, []);
+    }
+    classMap.get(className).push(drug);
+  });
 
-// TE Recommendations Data
-export const mockTERecommendations = [
-  {
-    current_drug: 'Lipitor (Atorvastatin)',
-    recommended_drug: 'Generic Atorvastatin',
-    potential_savings: 125000,
-    confidence_score: 95,
-    affected_members: 250
-  },
-  {
-    current_drug: 'Nexium (Esomeprazole)',
-    recommended_drug: 'Generic Omeprazole',
-    potential_savings: 89000,
-    confidence_score: 88,
-    affected_members: 180
-  },
-  {
-    current_drug: 'Crestor (Rosuvastatin)',
-    recommended_drug: 'Generic Rosuvastatin',
-    potential_savings: 76000,
-    confidence_score: 92,
-    affected_members: 145
-  }
-];
+  return Array.from(classMap.entries())
+    .map(([category, drugs]) => ({
+      category: category,
+      current: drugs.length * 12, // Simulated current utilization
+      projected: Math.round(drugs.length * 12 * (1 + Math.random() * 0.3)) // 0-30% growth
+    }))
+    .slice(0, 8); // Top 8 categories
+};
 
-// Formulary Data
-export const mockFormulary: FormularyEntry[] = [
-  {
-    ndc: '0093-1712-01',
-    drug_name: 'Warfarin',
-    tier: 'Preferred' as const,
-    pa_required: false,
-    step_therapy: null,
-    copay: 10
-  },
-  {
-    ndc: '0049-4900-30',
-    drug_name: 'Zoloft',
-    tier: 'Non-Preferred' as const,
-    pa_required: true,
-    step_therapy: 'Try generic sertraline first',
-    copay: 45
-  },
-  {
-    ndc: '50458-290-01',
-    drug_name: 'Tolsura',
-    tier: 'Specialty' as const,
-    pa_required: true,
-    step_therapy: 'Step therapy required',
-    copay: 150
-  }
-];
+export const mockUtilizationTrends = generateUtilizationTrends();
 
-// Prescribers Data
-export const mockPrescribers = [
-  {
-    npi: '1234567890',
-    prescriber_name: 'Dr. John Smith',
-    specialty: 'Internal Medicine',
-    state: 'CA',
-    total_claims: 2500,
-    total_cost: 125000,
-    unique_beneficiaries: 450,
-    generic_rate: 85.5,
-    cost_per_claim: 50.00
-  },
-  {
-    npi: '2345678901',
-    prescriber_name: 'Dr. Sarah Johnson',
-    specialty: 'Cardiology',
-    state: 'TX',
-    total_claims: 1800,
-    total_cost: 185000,
-    unique_beneficiaries: 380,
-    generic_rate: 78.2,
-    cost_per_claim: 102.78
-  },
-  {
-    npi: '3456789012',
-    prescriber_name: 'Dr. Michael Brown',
-    specialty: 'Endocrinology',
-    state: 'FL',
-    total_claims: 3200,
-    total_cost: 95000,
-    unique_beneficiaries: 620,
-    generic_rate: 92.1,
-    cost_per_claim: 29.69
-  }
-];
+// Generate TE recommendations from actual drug data
+const generateTERecommendations = () => {
+  const brandDrugs = mockDrugDetails.filter(drug => 
+    drug.drug_name !== drug.generic_name.toUpperCase() &&
+    drug.therapeutic_equivalence_code !== 'NA'
+  );
+
+  return brandDrugs.slice(0, 5).map(drug => {
+    const cost = typeof drug.total_drug_cost === 'string' 
+      ? parseFloat(drug.total_drug_cost.replace(/[$,]/g, '')) 
+      : drug.total_drug_cost;
+    const members = typeof drug.member_count === 'string' 
+      ? parseInt(drug.member_count.replace(/,/g, ''))
+      : drug.member_count;
+    
+    return {
+      current_drug: drug.drug_name,
+      recommended_drug: `Generic ${drug.generic_name}`,
+      potential_savings: Math.round(cost * 0.6), // 60% savings estimate
+      confidence_score: drug.therapeutic_equivalence_code === 'AB' ? 95 : 85,
+      affected_members: members
+    };
+  });
+};
+
+export const mockTERecommendations = generateTERecommendations();
+
+// Generate formulary entries from drug data
+const generateFormularyEntries = () => {
+  return mockDrugDetails.slice(0, 25).map(drug => {
+    const cost = typeof drug.total_drug_cost === 'string' 
+      ? parseFloat(drug.total_drug_cost.replace(/[$,]/g, '')) 
+      : drug.total_drug_cost;
+    
+    let tier: FormularyEntry['tier'];
+    let copay: number;
+    let pa_required: boolean;
+    
+    // Determine tier based on cost and therapeutic equivalence
+    if (drug.therapeutic_equivalence_code === 'AB' || drug.therapeutic_equivalence_code === 'AB1') {
+      tier = 'Preferred';
+      copay = 10;
+      pa_required = false;
+    } else if (cost > 100000) {
+      tier = 'Specialty';
+      copay = 150;
+      pa_required = true;
+    } else if (cost > 50000) {
+      tier = 'Non-Preferred';
+      copay = 45;
+      pa_required = true;
+    } else {
+      tier = 'Preferred';
+      copay = 20;
+      pa_required = false;
+    }
+
+    return {
+      ndc: drug.ndc,
+      drug_name: drug.drug_name,
+      tier,
+      pa_required,
+      step_therapy: pa_required ? 'Prior authorization required' : null,
+      copay
+    };
+  });
+};
+
+export const mockFormulary: FormularyEntry[] = generateFormularyEntries();
+
+// Generate prescriber data based on states and specialties from drug data
+const generatePrescriberData = () => {
+  const states = [...new Set(mockDrugDetails.map(drug => drug.state))];
+  const specialtyMap = {
+    'Cardiology': ['Statins', 'Anticoagulants'],
+    'Endocrinology': ['Antidiabetics', 'Blood Glucose Lowering Agents'],
+    'Psychiatry': ['Antidepressants', 'Antipsychotics'],
+    'Internal Medicine': ['Antibiotics', 'Analgesics'],
+    'Pulmonology': ['Respiratory Agents'],
+    'Gastroenterology': ['Proton Pump Inhibitors', 'Antiemetics']
+  };
+
+  return Object.entries(specialtyMap).map(([specialty, _], index) => {
+    const state = states[index % states.length];
+    const baseClaims = 1500 + Math.random() * 2000;
+    const costPerClaim = 25 + Math.random() * 150;
+    
+    return {
+      npi: `${1234567890 + index}`,
+      prescriber_name: `Dr. ${['John Smith', 'Sarah Johnson', 'Michael Brown', 'Emily Davis', 'David Wilson', 'Lisa Anderson'][index]}`,
+      specialty,
+      state,
+      total_claims: Math.round(baseClaims),
+      total_cost: Math.round(baseClaims * costPerClaim),
+      unique_beneficiaries: Math.round(baseClaims * 0.3),
+      generic_rate: 70 + Math.random() * 25,
+      cost_per_claim: Math.round(costPerClaim * 100) / 100
+    };
+  });
+};
+
+export const mockPrescribers = generatePrescriberData();
 
 // Scenario Results Data
 export const mockScenarioResults = [
