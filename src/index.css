@@ -2,39 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* PBM Healthcare Professional Design System 
+All colors MUST be HSL for professional healthcare applications.
+Inspired by Caremark, Express Scripts, and Optum design standards.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Healthcare Professional Color Palette */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 27%;
 
+    /* Card and surface colors */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Professional Healthcare Blue */
+    --primary: 210 100% 45%;
+    --primary-light: 210 100% 55%;
+    --primary-dark: 210 100% 35%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Healthcare Success Green */
+    --secondary: 142 76% 36%;
+    --secondary-light: 142 76% 46%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted backgrounds and text */
+    --muted: 210 20% 95%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Healthcare Orange for alerts */
+    --accent: 25 95% 53%;
+    --accent-light: 25 95% 63%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Status colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Border and input styles */
+    --border: 210 20% 90%;
+    --input: 210 20% 95%;
+    --ring: 210 100% 45%;
+
+    /* Healthcare specific colors */
+    --tier-preferred: 142 76% 36%;
+    --tier-non-preferred: 45 93% 47%;
+    --tier-specialty: 271 81% 56%;
+    --tier-excluded: 0 84% 60%;
+    
+    /* Data visualization colors */
+    --chart-1: 210 100% 45%;
+    --chart-2: 142 76% 36%;
+    --chart-3: 25 95% 53%;
+    --chart-4: 271 81% 56%;
+    --chart-5: 348 83% 47%;
+
+    /* Gradients for professional backgrounds */
+    --gradient-primary: linear-gradient(135deg, hsl(210, 100%, 45%) 0%, hsl(210, 100%, 35%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(142, 76%, 36%) 0%, hsl(142, 76%, 26%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(210, 100%, 45%) 0%, hsl(210, 100%, 35%) 50%, hsl(142, 76%, 36%) 100%);
+    
+    /* Professional shadows */
+    --shadow-card: 0 1px 3px 0 hsl(210 20% 15% / 0.1), 0 1px 2px -1px hsl(210 20% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(210 20% 15% / 0.1), 0 4px 6px -4px hsl(210 20% 15% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(210 20% 15% / 0.1), 0 8px 10px -6px hsl(210 20% 15% / 0.1);
+
+    /* Animation and transitions */
+    --transition-all: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-colors: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --radius: 0.5rem;
 
     --radius: 0.5rem;
 

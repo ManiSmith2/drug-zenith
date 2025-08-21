@@ -3,7 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { AppLayout } from "./components/layout/AppLayout";
+import Dashboard from "./pages/Dashboard";
+import Formulary from "./pages/Formulary";
+import Scenarios from "./pages/Scenarios";
+import Providers from "./pages/Providers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,7 +19,46 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          } />
+          <Route path="/formulary" element={
+            <AppLayout>
+              <Formulary />
+            </AppLayout>
+          } />
+          <Route path="/scenarios" element={
+            <AppLayout>
+              <Scenarios />
+            </AppLayout>
+          } />
+          <Route path="/providers" element={
+            <AppLayout>
+              <Providers />
+            </AppLayout>
+          } />
+          <Route path="/forecasts" element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          } />
+          <Route path="/adherence" element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          } />
+          <Route path="/reports" element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          } />
+          <Route path="/settings" element={
+            <AppLayout>
+              <Dashboard />
+            </AppLayout>
+          } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
