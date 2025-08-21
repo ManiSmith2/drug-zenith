@@ -1,4 +1,4 @@
-// Excel data converted to a TypeScript interface and mock data array.
+import { FormularyEntry } from "@/types/pbm";
 
 export interface DrugDetails {
   ndc: string;
@@ -743,4 +743,146 @@ export const mockDrugDetails: DrugDetails[] = [
     created_at: "2025-08-21",
     updated_at: "2025-08-21",
   },
+];
+
+// KPI Mock Data
+export const mockKPIs = {
+  pmpm: 89.45,
+  pmpm_trend: -3.2,
+  cost_reduction_percent: 8.5,
+  member_access_percent: 96.8,
+  generic_fill_rate: 87.3
+};
+
+// PMMP Trend Data
+export const mockPMMPData = [
+  { month: 'Jan', pmpm: 95.2, target: 85.0, baseline: 98.5 },
+  { month: 'Feb', pmpm: 92.8, target: 85.0, baseline: 98.5 },
+  { month: 'Mar', pmpm: 91.3, target: 85.0, baseline: 98.5 },
+  { month: 'Apr', pmpm: 89.7, target: 85.0, baseline: 98.5 },
+  { month: 'May', pmpm: 88.9, target: 85.0, baseline: 98.5 },
+  { month: 'Jun', pmpm: 89.45, target: 85.0, baseline: 98.5 }
+];
+
+// Utilization Trends Data
+export const mockUtilizationTrends = [
+  { category: 'Diabetes', current: 85, projected: 92 },
+  { category: 'Hypertension', current: 78, projected: 82 },
+  { category: 'Mental Health', current: 65, projected: 75 },
+  { category: 'Specialty', current: 45, projected: 52 },
+  { category: 'Antibiotics', current: 38, projected: 35 }
+];
+
+// TE Recommendations Data
+export const mockTERecommendations = [
+  {
+    current_drug: 'Lipitor (Atorvastatin)',
+    recommended_drug: 'Generic Atorvastatin',
+    potential_savings: 125000,
+    confidence_score: 95,
+    affected_members: 250
+  },
+  {
+    current_drug: 'Nexium (Esomeprazole)',
+    recommended_drug: 'Generic Omeprazole',
+    potential_savings: 89000,
+    confidence_score: 88,
+    affected_members: 180
+  },
+  {
+    current_drug: 'Crestor (Rosuvastatin)',
+    recommended_drug: 'Generic Rosuvastatin',
+    potential_savings: 76000,
+    confidence_score: 92,
+    affected_members: 145
+  }
+];
+
+// Formulary Data
+export const mockFormulary: FormularyEntry[] = [
+  {
+    ndc: '0093-1712-01',
+    drug_name: 'Warfarin',
+    tier: 'Preferred' as const,
+    pa_required: false,
+    step_therapy: null,
+    copay: 10
+  },
+  {
+    ndc: '0049-4900-30',
+    drug_name: 'Zoloft',
+    tier: 'Non-Preferred' as const,
+    pa_required: true,
+    step_therapy: 'Try generic sertraline first',
+    copay: 45
+  },
+  {
+    ndc: '50458-290-01',
+    drug_name: 'Tolsura',
+    tier: 'Specialty' as const,
+    pa_required: true,
+    step_therapy: 'Step therapy required',
+    copay: 150
+  }
+];
+
+// Prescribers Data
+export const mockPrescribers = [
+  {
+    npi: '1234567890',
+    prescriber_name: 'Dr. John Smith',
+    specialty: 'Internal Medicine',
+    state: 'CA',
+    total_claims: 2500,
+    total_cost: 125000,
+    unique_beneficiaries: 450,
+    generic_rate: 85.5,
+    cost_per_claim: 50.00
+  },
+  {
+    npi: '2345678901',
+    prescriber_name: 'Dr. Sarah Johnson',
+    specialty: 'Cardiology',
+    state: 'TX',
+    total_claims: 1800,
+    total_cost: 185000,
+    unique_beneficiaries: 380,
+    generic_rate: 78.2,
+    cost_per_claim: 102.78
+  },
+  {
+    npi: '3456789012',
+    prescriber_name: 'Dr. Michael Brown',
+    specialty: 'Endocrinology',
+    state: 'FL',
+    total_claims: 3200,
+    total_cost: 95000,
+    unique_beneficiaries: 620,
+    generic_rate: 92.1,
+    cost_per_claim: 29.69
+  }
+];
+
+// Scenario Results Data
+export const mockScenarioResults = [
+  {
+    scenario_name: 'Generic Switch Initiative',
+    projected_savings: 2400000,
+    pmpm_impact: -12.5,
+    new_pmpm: 76.95,
+    access_score: 96.2,
+    roi_percentage: 85.5,
+    affected_members: 15000,
+    implementation_date: '2025-01-01'
+  },
+  {
+    scenario_name: 'Tier Optimization',
+    projected_savings: 1800000,
+    pmpm_impact: -9.8,
+    new_pmpm: 79.65,
+    access_score: 95.8,
+    roi_percentage: 72.3,
+    affected_members: 8500,
+    implementation_date: '2025-02-01'
+  }
 ];
