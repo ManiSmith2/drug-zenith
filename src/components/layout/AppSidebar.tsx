@@ -8,7 +8,9 @@ import {
   FileText,
   Shield,
   Calculator,
-  Database
+  Database,
+  MessageSquare,
+  Activity
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
@@ -26,10 +28,11 @@ import {
 const navigationItems = [
   { title: "Dashboard", url: "/", icon: BarChart3 },
   { title: "Drug Database", url: "/drugs", icon: Database },
+  { title: "Sentiment Analysis", url: "/sentiment", icon: MessageSquare },
+  { title: "Forecasting", url: "/forecasting", icon: Activity },
   { title: "Formulary", url: "/formulary", icon: PillBottle },
   { title: "Scenarios", url: "/scenarios", icon: Calculator },
   { title: "Providers", url: "/providers", icon: Users },
-  { title: "Forecasts", url: "/forecasts", icon: TrendingUp },
   { title: "Adherence", url: "/adherence", icon: Shield },
   { title: "Reports", url: "/reports", icon: FileText },
   { title: "Settings", url: "/settings", icon: Settings },

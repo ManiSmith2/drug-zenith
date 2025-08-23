@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,14 @@ import {
   Search, 
   Filter, 
   Download, 
+  Plus,
   ChevronRight,
   AlertTriangle,
   TrendingUp,
   Users,
   DollarSign,
-  Calendar
+  Calendar,
+  Database
 } from "lucide-react";
 import {
   Table,
@@ -29,8 +31,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { mockDrugDetails } from "@/lib/mock-data";
-import { TierBadge } from "@/components/dashboard/TierBadge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { apiService, type Drug } from "@/lib/api";
+import { toast } from "sonner";
 
 const getTherapeuticEquivalenceBadge = (te_code: string | null) => {
   if (!te_code || te_code === 'NA') {
@@ -43,32 +55,54 @@ const getTherapeuticEquivalenceBadge = (te_code: string | null) => {
 
 const formatCurrency = (value: string | number) => {
   if (typeof value === 'string') {
-    return value;
+    const numValue = parseFloat(value.replace(/[$,]/g, ''));
+    return isNaN(numValue) ? value : `$${numValue.toLocaleString()}`;
   }
   return `$${value.toLocaleString()}`;
 };
 
 const formatNumber = (value: string | number) => {
   if (typeof value === 'string') {
-    return value;
+    const numValue = parseInt(value.replace(/,/g, ''));
+    return isNaN(numValue) ? value : numValue.toLocaleString();
   }
   return value.toLocaleString();
 };
 
 export default function DrugDatabase() {
+  const [drugs, setDrugs] = useState<Drug[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState("all");
   const [selectedTE, setSelectedTE] = useState("all");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [newDrug, setNewDrug] = useState<Partial<Drug>>({});
+
+  useEffect(() => {
+    loadDrugs();
+  }, []);
+
+  const loadDrugs = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getDrugs();
+      setDrugs(response.drugs);
+    } catch (error) {
+      toast.error("Failed to load drugs: " + (error as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Get unique therapeutic classes for filter
   const therapeuticClasses = useMemo(() => {
-    const classes = [...new Set(mockDrugDetails.map(drug => drug.therapeutic_class))];
+    const classes = [...new Set(drugs.map(drug => drug.therapeutic_class))];
     return classes.sort();
-  }, []);
+  }, [drugs]);
 
   // Filter drugs based on search and filters
   const filteredDrugs = useMemo(() => {
-    return mockDrugDetails.filter(drug => {
+    return drugs.filter(drug => {
       const matchesSearch = 
         drug.drug_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         drug.generic_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,7 +117,7 @@ export default function DrugDatabase() {
       
       return matchesSearch && matchesClass && matchesTE;
     });
-  }, [searchTerm, selectedClass, selectedTE]);
+  }, [drugs, searchTerm, selectedClass, selectedTE]);
 
   // Calculate summary statistics
   const summaryStats = useMemo(() => {
@@ -111,6 +145,42 @@ export default function DrugDatabase() {
     };
   }, [filteredDrugs]);
 
+  const handleAddDrug = async () => {
+    try {
+      await apiService.addDrug(newDrug);
+      toast.success("Drug added successfully!");
+      setIsAddDialogOpen(false);
+      setNewDrug({});
+      loadDrugs();
+    } catch (error) {
+      toast.error("Failed to add drug: " + (error as Error).message);
+    }
+  };
+
+  const exportData = () => {
+    const csvContent = [
+      Object.keys(filteredDrugs[0] || {}).join(','),
+      ...filteredDrugs.map(drug => Object.values(drug).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'drug_database.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <span className="ml-2">Loading drug database...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -122,10 +192,83 @@ export default function DrugDatabase() {
           </p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={exportData}>
             <Download className="h-4 w-4 mr-2" />
             Export Data
           </Button>
+          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Drug
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Add New Drug</DialogTitle>
+                <DialogDescription>
+                  Enter the details for the new drug entry.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="ndc">NDC</Label>
+                  <Input
+                    id="ndc"
+                    value={newDrug.ndc || ''}
+                    onChange={(e) => setNewDrug({...newDrug, ndc: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="drug_name">Drug Name</Label>
+                  <Input
+                    id="drug_name"
+                    value={newDrug.drug_name || ''}
+                    onChange={(e) => setNewDrug({...newDrug, drug_name: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="generic_name">Generic Name</Label>
+                  <Input
+                    id="generic_name"
+                    value={newDrug.generic_name || ''}
+                    onChange={(e) => setNewDrug({...newDrug, generic_name: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="therapeutic_class">Therapeutic Class</Label>
+                  <Input
+                    id="therapeutic_class"
+                    value={newDrug.therapeutic_class || ''}
+                    onChange={(e) => setNewDrug({...newDrug, therapeutic_class: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="pmpm_cost">PMPM Cost</Label>
+                  <Input
+                    id="pmpm_cost"
+                    type="number"
+                    value={newDrug.pmpm_cost || ''}
+                    onChange={(e) => setNewDrug({...newDrug, pmpm_cost: parseFloat(e.target.value)})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    value={newDrug.state || ''}
+                    onChange={(e) => setNewDrug({...newDrug, state: e.target.value})}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleAddDrug}>Add Drug</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -135,7 +278,7 @@ export default function DrugDatabase() {
           <CardContent className="pt-6">
             <div className="flex items-center">
               <div className="p-2 bg-primary/10 rounded-lg">
-                <TrendingUp className="h-4 w-4 text-primary" />
+                <Database className="h-4 w-4 text-primary" />
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-muted-foreground">Total Drugs</p>
@@ -252,7 +395,7 @@ export default function DrugDatabase() {
                   <TableHead>PMPM</TableHead>
                   <TableHead>Members</TableHead>
                   <TableHead>State</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>Clinical Efficacy</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -273,10 +416,8 @@ export default function DrugDatabase() {
                     <TableCell>
                       <Badge variant="secondary">{drug.state}</Badge>
                     </TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
+                    <TableCell className="max-w-xs truncate" title={drug.clinical_efficacy}>
+                      {drug.clinical_efficacy}
                     </TableCell>
                   </TableRow>
                 ))}

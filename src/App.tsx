@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import DrugDatabase from "./pages/DrugDatabase";
+import SentimentAnalysis from "./pages/SentimentAnalysis";
+import Forecasting from "./pages/Forecasting";
 import Formulary from "./pages/Formulary";
 import Scenarios from "./pages/Scenarios";
 import Providers from "./pages/Providers";
@@ -30,6 +32,16 @@ const App = () => (
               <DrugDatabase />
             </AppLayout>
           } />
+          <Route path="/sentiment" element={
+            <AppLayout>
+              <SentimentAnalysis />
+            </AppLayout>
+          } />
+          <Route path="/forecasting" element={
+            <AppLayout>
+              <Forecasting />
+            </AppLayout>
+          } />
           <Route path="/formulary" element={
             <AppLayout>
               <Formulary />
@@ -43,11 +55,6 @@ const App = () => (
           <Route path="/providers" element={
             <AppLayout>
               <Providers />
-            </AppLayout>
-          } />
-          <Route path="/forecasts" element={
-            <AppLayout>
-              <Dashboard />
             </AppLayout>
           } />
           <Route path="/adherence" element={

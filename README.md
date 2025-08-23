@@ -1,6 +1,6 @@
 # PBM Optimize - Pharmacy Benefit Management Platform
 
-A comprehensive PBM optimization platform designed to reduce pharmacy costs by 12% while maintaining 95%+ member satisfaction with drug access.
+A comprehensive AI-powered PBM optimization platform designed to reduce pharmacy costs by 12% while maintaining 95%+ member satisfaction with drug access.
 
 ## 🎯 Project Overview
 
@@ -13,6 +13,9 @@ A comprehensive PBM optimization platform designed to reduce pharmacy costs by 1
 - Therapeutic equivalence optimization
 - Drug utilization trend prediction
 - Cost-per-member-per-month (PMPM) tracking
+- AI-powered drug recommendations
+- Sentiment analysis of drug reviews
+- Predictive cost forecasting
 
 ## 🏗️ Architecture
 
@@ -23,6 +26,12 @@ A comprehensive PBM optimization platform designed to reduce pharmacy costs by 1
 - **shadcn/ui** components for consistent UI
 - **Recharts** for data visualization
 - **React Router** for navigation
+
+### Backend Stack
+- **Flask** for API server
+- **Python** with ML libraries (scikit-learn, LightGBM, transformers)
+- **NLP** for drug interaction analysis
+- **Pandas** for data processing
 
 ### Design System
 Professional healthcare industry-inspired design featuring:
@@ -39,31 +48,89 @@ Professional healthcare industry-inspired design featuring:
 - Member access score visualization
 - Generic fill rate analytics
 - Utilization forecasting by drug category
+- **AI Drug Recommendation Engine** with ML-powered suggestions
+- Real-time cost savings analysis
+- Interactive drug search and recommendation
 
-### 2. Formulary Management
-- Complete NDC-level drug database
-- Tier assignment (Preferred/Non-Preferred/Specialty/Excluded)
-- Prior authorization (PA) requirements
+- **Live integration with ML model**
+- Export functionality
 - Step therapy protocols
+### 3. Sentiment Analysis Module
+- AI-powered sentiment analysis of drug reviews
+- Patient feedback aggregation
+- Therapeutic class sentiment comparison
+- Risk identification based on negative sentiment
+- Visual sentiment distribution charts
 - Real-time impact analysis for changes
+### 4. Predictive Forecasting
+- ML-powered cost forecasting (3, 6, 12 months)
+- Trend analysis and risk assessment
+- Confidence intervals for predictions
+- Budget planning support
+- Early warning system for cost increases
 
-### 3. Therapeutic Equivalence (TE) Engine
+### 5. Therapeutic Equivalence (TE) Engine
 - AB-rated generic identification
 - Cost savings calculation per switch
 - Confidence scoring for recommendations
 - Batch optimization capabilities
 
-### 4. Scenario Analysis
+### 6. Scenario Analysis
 - What-if modeling for formulary changes
 - ROI calculation and projections
 - Member disruption impact assessment
 - Access score maintenance validation
 
-### 5. Provider Analytics
+### 7. Provider Analytics
 - Prescriber performance scorecards
 - Cost efficiency metrics
 - Generic prescribing rates
 - Targeted intervention recommendations
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+- Python 3.8+
+- Your drug dataset in CSV format
+
+### Installation
+
+1. **Clone the repository**
+```bash
+git clone <repository-url>
+cd pbm-optimize
+```
+
+2. **Install Frontend Dependencies**
+```bash
+npm install
+```
+
+3. **Install Backend Dependencies**
+```bash
+cd backend
+pip install -r requirements.txt
+```
+
+4. **Setup Your Dataset**
+- Place your CSV file in `backend/data/testtt01.csv`
+- Ensure it has the required columns: ndc, drug_name, generic_name, therapeutic_class, pmpm_cost, etc.
+
+5. **Start the Backend Server**
+```bash
+cd backend
+python server.py
+```
+
+6. **Start the Frontend Development Server**
+```bash
+npm run dev
+```
+
+7. **Access the Application**
+- Frontend: http://localhost:8080
+- Backend API: http://localhost:5000
 
 ## 🗂️ File Structure
 
@@ -74,17 +141,41 @@ src/
 │   ├── dashboard/        # KPICard, ImpactWidget, TierBadge
 │   └── ui/              # shadcn/ui components
 ├── pages/
+│   ├── SentimentAnalysis.tsx  # Drug sentiment analysis
+│   ├── Forecasting.tsx  # Predictive cost forecasting
 │   ├── Dashboard.tsx     # Executive overview
 │   ├── Formulary.tsx     # Drug management
 │   ├── Scenarios.tsx     # What-if analysis
 │   └── Providers.tsx     # Prescriber insights
+├── lib/
+│   ├── api.ts           # Backend API integration
+│   └── utils.ts         # Utility functions
 ├── types/
 │   └── pbm.ts           # TypeScript domain models
-├── lib/
-│   ├── mock-data.ts     # Development data
-│   └── utils.ts         # Utility functions
 └── index.css           # Design system tokens
+
+backend/
+├── server.py           # Flask API server
+├── app.py             # ML model logic
+├── requirements.txt   # Python dependencies
+└── data/             # Dataset storage
 ```
+
+## 🤖 ML Model Features
+
+### Drug Recommendation Engine
+- **NLP-powered interaction analysis** using BART-large-mnli
+- **LightGBM regression model** for recommendation scoring
+- **Therapeutic equivalence validation**
+- **Cost optimization with safety constraints**
+- **Real-time confidence scoring**
+
+### Key ML Capabilities
+1. **Interaction Risk Assessment**: NLP analysis of drug interactions
+2. **Cost-Benefit Analysis**: ML-powered savings calculations
+3. **Safety Scoring**: Automated risk assessment
+4. **Therapeutic Equivalence**: AB-rated generic identification
+5. **Confidence Intervals**: Statistical confidence in recommendations
 
 ## 🎨 Design System
 
@@ -153,39 +244,29 @@ npm run build
 npm run type-check
 ```
 
-## 🎯 Usage Examples
+## 🔌 API Endpoints
 
-### 1. Dashboard Navigation
+### Core Endpoints
+- `GET /api/health` - Server health check
+- `GET /api/drugs` - Get all drugs from dataset
+- `GET /api/drug-stats` - Get statistical overview
+- `POST /api/recommend` - Get ML recommendations
+- `GET /api/cost-analysis` - Get cost analysis data
+- `POST /api/add-drug` - Add new drug to dataset
+
+### ML Integration
+- Real-time model inference
+- NLP-powered interaction analysis
+- Confidence scoring
+- Safety validation
 - Access via sidebar navigation
-- Real-time KPI monitoring
-- Drill-down capabilities for detailed analysis
-
-### 2. Formulary Changes
 - Search by NDC or drug name
-- Filter by tier, PA status, or step therapy
-- Instant impact preview for modifications
 
 ### 3. TE Recommendations
 - Automated generic alternative identification  
-- Savings calculations with confidence scores
-- Batch processing for portfolio optimization
-
-### 4. Scenario Building
 - Drag-and-drop formulary modifications
 - Real-time ROI calculation
 - Access score validation
-
-## 📊 Data Integration
-
-### Expected Excel Schema
-The platform expects data in the following Excel sheet structure:
-
-- **Prescribers:** NPI, name, specialty, state, claims, cost
-- **Claims:** Member ID, NDC, quantity, cost, dates  
-- **Members:** Demographics, plan information, risk scores
-- **Formulary:** NDC, tier, PA requirements, copays
-- **TE_Equivalence:** Therapeutic equivalence mappings
-- **Rebates:** Manufacturer rebate information
 
 ## 🎨 UI Components
 
@@ -195,13 +276,13 @@ The platform expects data in the following Excel sheet structure:
 - `ImpactWidget`: Change analysis with access validation
 - Professional data tables with advanced filtering
 - Clinical-grade charts and visualizations
+- `RecommendationEngine`: AI-powered drug suggestions
+- `SentimentChart`: Sentiment visualization components
+- `ForecastChart`: Predictive analytics displays
 
 ## 📱 Responsive Design
 
 Optimized for healthcare workflows across devices:
-- Desktop: Full analytics dashboard
-- Tablet: Touch-optimized formulary management
-- Mobile: Quick access to key metrics
 
 ## 🔒 Security & Compliance
 
@@ -210,9 +291,32 @@ Built with healthcare data security in mind:
 - Aggregated data presentation only
 - Professional audit trails
 - HIPAA-ready architecture foundations
+- Secure API endpoints
+- Data validation and sanitization
+
+## 🚀 Production Deployment
+
+### Frontend Deployment
+```bash
+npm run build
+# Deploy dist/ folder to your web server
+```
+
+### Backend Deployment
+```bash
+# Use gunicorn for production
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:5000 server:app
+```
+
+### Environment Variables
+- Set appropriate CORS origins for production
+- Configure database connections if needed
+- Set up logging and monitoring
 
 ---
 
-**Technology Stack:** React, TypeScript, Tailwind CSS, shadcn/ui, Recharts, Vite
+**Technology Stack:** React, TypeScript, Tailwind CSS, shadcn/ui, Recharts, Vite, Flask, Python, ML (LightGBM, Transformers)
 **Industry Focus:** Pharmacy Benefit Management (PBM)  
 **Target Users:** PBM Analysts, Healthcare Administrators, Pharmacy Directors
+**AI Features:** Drug Recommendations, Sentiment Analysis, Cost Forecasting, NLP Interaction Analysis
